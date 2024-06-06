@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amilliondrizzles | Art Gallery</title>
+    <link rel="stylesheet" href="{% static 'app1/style2.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+
+<body>
+    {% csrf_token %} 
+    <div class="header_otherpages">
+        <nav>
+            <h2>amilliondrizzles</h2>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{% url 'home' %}">HOME</a></li>
+                    <li><a href="{% url 'aboutus' %}">ABOUT</a></li>
+                    <li><a href="{% url 'customize' %}">CUSTOMIZE</a></li>
+                    <li><a href="{% url 'contact' %}">FEEDBACK</a></li>
+                    <li><a href="{% url 'logout' %}">LOGOUT</a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" aria-hidden="true"></i>
+        </nav>
+    </div>
+
+    <section id="contact">
+        <h2 class="title">CUSTOMIZATION QUERY</h2>
+        <div class="contactbox">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %} 
+                <div class="formgroup">
+                    <label for="firstName">First Name</label>
+                    <input type="text" name="firstName" id="firstName" placeholder="">
+                </div>
+                <div class="formgroup">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" name="lastName" id="lastName" placeholder="">
+                </div>
+                <div class="formgroup">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" placeholder="">
+                </div>
+                <div class="formgroup">
+                    <label for="phone">Phone</label>
+                    <input type="tel" name="phone" id="phone" placeholder="">
+                </div>
+                <div class="formgroup">
+                    <label for="message">Message</label>
+                    <textarea name="message" id="message" cols="10" rows="3"></textarea>
+                </div>
+                <div class="formgroup">
+                    <label for="image">Upload Image</label>
+                    <input type="file" name="image" id="image" accept="image/*">
+                </div>
+                <div class="formgroup">
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    
+
+    <section class="footer">
+
+        <div class="icons">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-pinterest"></i>
+            <i class="fab fa-linkedin"></i>
+            <i class="fab fa-facebook"></i>
+        </div>
+        <p> Copyright &copy; amilliondrizzles.com. All rights reserved.</p>
+
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const message = document.getElementById('message').value;
+                const image = document.getElementById('image').value;
+
+                if (firstName.trim() === '' || lastName.trim() === '' || email.trim() === '' || phone.trim() === '' || message.trim() === '') {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+
+                if (phone.length !== 10 || isNaN(phone)) {
+                    alert('Phone number should be 10 digits.');
+                    return;
+                }
+
+                if (!email.includes('@')) {
+                    alert('Invalid email address.');
+                    return;
+                }
+                alert('Form submitted successfully!');
+                form.submit(); 
+            });
+        });
+    </script>
+</body>
+
+</html>

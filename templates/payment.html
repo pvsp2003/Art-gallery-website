@@ -1,0 +1,204 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #1f0210; 
+            background: radial-gradient(#ffe5d8, #ffcad4);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); 
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6a5acd; 
+        }
+        
+        .cart-summary {
+            margin-bottom: 30px;
+        }
+        
+        .items-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .item {
+            width: calc(33.33% - 20px);
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .item img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .item-details {
+            text-align: center;
+            color: #333;
+        }
+        
+        .total {
+            text-align: right;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #6a5acd; 
+        }
+        
+        .payment-form {
+            background-color: rgba(255, 182, 193, 0.9); 
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #6a5acd;
+        }
+        
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            transition: border-color 0.3s ease;
+            color: #333;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus {
+            border-color: #6a5acd; 
+        }
+        
+        .pay-btn {
+            background-color: #6a5acd; 
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .pay-btn:hover {
+            background-color: #483d8b; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Summary</h1>
+        <div class="cart-summary">
+            <div class="items-container">
+                {% if cart_content %}
+                    {% for item in cart_content %}
+                        <div class="item">
+                            <img src="{{ item.imgSrc }}" alt="Product Image">
+                            <div class="item-details">
+                                <h3>{{ item.title }}</h3>
+                                <p>Price: {{ item.price }}</p>
+                                <p>Quantity: {{ item.quantity }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No items in the cart</p>
+                {% endif %}
+            </div>
+            <div class="total">
+                <h2>Total: Rs. {{ total_price }}</h2>
+            </div>
+        </div>
+        <div class="payment-form">
+            <h2>Enter Your Details</h2>
+            <form action="{% url 'payment_success' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="order_details" name="details">
+                <input type="hidden" id="order_total" name="total">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="text" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+                <button type="submit" class="pay-btn" onclick="alert('Payment Succesfull!')">Pay Now</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        window.onload = function() {
+            var total = "{{ total_price }}"; 
+        document.getElementById('order_total').value = total
+        function generateDetails() {
+            var details = "";
+            var items = document.querySelectorAll('.item-details');
+            items.forEach(function(item) {
+                var name = item.querySelector('h3').textContent;
+                var quantity = item.querySelector('p:nth-child(3)').textContent;
+                details += name + ": " + quantity + ", ";
+            });
+            details = details.slice(0, -2);
+            return details;
+        }
+        document.getElementById('order_details').value = generateDetails();
+        };
+    </script>
+</body>
+</html>

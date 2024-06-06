@@ -1,0 +1,63 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amilliondrizzles | Art Gallery</title>
+    <link rel="stylesheet" href="{% static 'app1/style2.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+
+<body>
+    {% csrf_token %}
+    <section class="header">
+        <nav>
+            <h2>amilliondrizzles</h2>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{% url 'painterhome' %}">HOME</a></li>
+                    <li><a href="{% url 'uploadpainting' %}">UPLOAD PAINTINGS</a></li>
+                    <li><a href="{% url 'vieworders' %}">VIEW ORDERS</a></li>
+                    <li><a href="{% url 'viewcustomize' %}">CUSTOMIZE QUERIES</a></li>
+                    <li><a href="{% url 'viewfeedback' %}">FEEDBACK</a></li>
+                    <li><a href="{% url 'logout' %}">LOGOUT</a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" aria-hidden="true"></i>
+        </nav>
+        <div class="text-box">
+            <img src="{% static 'app1/amilliondrizzles__1_-modified-removebg-preview.png' %}" alt="">
+            <p> Exploring Art in Every Way!</p>
+            <a href="" class="shopbtn">Get Started</a>
+        </div>
+    </section>
+
+
+   <section class="painterinfo">
+    <div>
+    </div>
+   </section>
+   
+    <section class="footer">
+
+        <div class="icons">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-pinterest"></i>
+            <i class="fab fa-linkedin"></i>
+            <i class="fab fa-facebook"></i>
+        </div>
+        <p> Copyright &copy; amilliondrizzles.com. All rights reserved.</p>
+
+    </section>
+
+</body>
+
+</html>

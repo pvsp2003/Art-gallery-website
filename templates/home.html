@@ -1,0 +1,478 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amilliondrizzles | Art Gallery</title>
+    <link rel="stylesheet" href="{% static 'app1/style2.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <style>
+        .submit-rating{
+            background-color:lightseagreen; 
+            color: white; 
+            padding: 5px 10px; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer; 
+            font-size: 14px; 
+        }
+
+        .submit-rating:hover {
+            background-color: lightgreen; 
+        }
+        .btn-buy{
+          background-color:lightseagreen;   
+        }
+        .savecart{
+            padding: 12px 20px;
+            background-color:#2f3542;
+            color:#fff;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .box {
+    position: relative;
+}
+.box {
+    position: relative;
+}
+
+.cart-icon-container {
+    position: relative;
+    cursor: pointer;
+}
+
+#cart-icon {
+    font-size: 32px;
+    color: #333;
+    margin-right: 10px; /* Add margin to separate it from other options */
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px; 
+    background-color: lightseagreen;
+    color: white;
+    border-radius: 50%;
+    padding: 6px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    z-index: 1;
+}
+
+#para{
+    font-size: 40px;
+}
+@media only screen and (max-width: 600px) {
+    #cart-icon {
+        font-size: 24px;
+        margin-right: 5px;
+    }
+    .cart-count {
+        font-size: 12px;
+        padding: 4px 8px;
+        min-width: 20px;
+    }
+}
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    {% csrf_token %}
+    <section class="header">
+        <nav>
+            <h2>amilliondrizzles</h2>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{% url 'home' %}">HOME</a></li>
+                    <li><a href="{% url 'aboutus' %}">ABOUT</a></li>
+                    <li><a href="#gallery">GALLERY</a></li>
+                    <li><a href="{% url 'customize' %}">CUSTOMIZE</a></li>
+                    <li><a href="{% url 'contact' %}">FEEDBACK</a></li>
+                    <li><a href="{% url 'logout' %}">LOGOUT</a></li>
+                </ul>
+            </div>
+            <div class="box">
+                <input type="hidden" value="{{ count }}" id="initnum">
+                <div class="cart-icon-container">
+                    <ion-icon name="cart" id="cart-icon"></ion-icon>
+                    <div class="cart-count">{{ count }}</div>
+                </div>
+            </div>
+            <form method="post" action="{% url 'cartsave' %}">
+                {% csrf_token %}
+                <input type="hidden" name="uname" value="{{ username }}">
+                <input type="hidden" name="cart"> 
+            <div class="cart" >
+                <div class="cart-title">Cart Items</div>
+                <div class="cart-content">
+                    {% if cart_items %}
+                        {% for item in cart_items %}
+                            <div class="cart-box">
+                                <img src="{{ item.imgSrc }}" class="cart-img">
+                                <div class="detail-box">
+                                    <div class="cart-food-title">{{ item.title }}</div>
+                                    <div class="cart-price">{{ item.price }}</div>
+                                    <div class="cart-amt">{{ item.price }}</div>
+                                    <input type="number" value="{{ item.quantity }}" class="cart-quantity">
+                                </div>
+                                <ion-icon name="trash" class="cart-remove"></ion-icon>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No items in the cart</p>
+                    {% endif %}
+                </div>
+                
+                <div class="total">
+                    <div class="total-title">Total</div>
+                    <div class="total-price">Rs.0</div>
+                </div>
+                <button type="submit" class="savecart">Save Cart</button>
+            </form>
+                <button class="btn-buy"><a href="{% url 'payment' %}">Place Order</a></button>
+                <ion-icon name="close" id="cart-close"></ion-icon>
+
+            </div>
+        </nav>
+        <div class="text-box">
+            <img src="{% static 'app1/amilliondrizzles__1_-modified-removebg-preview.png' %}" alt="">
+            <p id="para"> Exploring Art in Every Way!</p>
+            <p>Welcome <span name="uname">{{username}}!</span> </p>
+            <a href="#gallery" class="shopbtn">Shop Now</a>
+        </div>
+    </section>
+
+    <section id="gallery">
+        {% csrf_token %}
+        <div class="categories">
+            <h2 class="title">GALLERY</h2>
+            <div class="sort-buttons">
+                <label class="sortbtn" for="medium-select">Sort by Medium:</label>
+                <select class="sortbtn" name="medium-select" id="medium-select" onchange="sortPaintingsByMedium()">
+                    <option value="all">All Mediums</option>
+                    <option value="Watercolors">Watercolors</option>
+                    <option value="Goauche">Goauche</option>
+                    <option value="Acrylic">Acrylic</option>
+                </select>
+                <label class="sortbtn" for="price-select">Sort by Price:</label>
+                <select class="sortbtn" name="price-select" id="price-select" onchange="sortPaintingsByPrice()">
+                    <option value="asc">Low to High</option>
+                    <option value="desc">High to Low</option>
+                </select>
+                <label class="sortbtn" for="rating-select">Sort by Rating:</label>
+                <select class="sortbtn" name="rating-select" id="rating-select" onchange="sortPaintingsByRating()">
+                    <option value="asc">Low to High</option>
+                    <option value="desc">High to Low</option>
+                </select>
+
+            </div>
+            <div class="container">
+                <div class="shop-content">
+                    {% for painting in paintings %}
+                    <div class="painting-box">
+                        <div class="pic">
+                            <img src="{{ painting.img.url }}" class="painting">
+                        </div>
+                        <h2 class="painting-title">{{ painting.name }}</h2>
+                        <p>{{ painting.medium }}</p>
+                        <span class="painting-price">Rs.{{ painting.price }}</span>
+                        <p class="painting-rating" id="rating">Rating: {{ painting.rating }}/5({{painting.noofpeoplerated}} rated)</p>
+                        <div class="rating-container">
+                            <div class="stars">
+                                <i class="far fa-star star" data-index="0"></i>
+                                <i class="far fa-star star" data-index="1"></i>
+                                <i class="far fa-star star" data-index="2"></i>
+                                <i class="far fa-star star" data-index="3"></i>
+                                <i class="far fa-star star" data-index="4"></i>
+                            </div>
+                            <input type="hidden" class="rating-value" value="0">
+                        </div>
+                        <button class="submit-rating" style="display: none;">
+                            <a href="{% url 'updaterating' painting.id 0 %}" class="submit-link"  id="{{painting.id}}">Submit</a>
+                        </button>
+                        <ion-icon name="cart" class="add-cart"></ion-icon>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="footer">
+
+        <div class="icons">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-pinterest"></i>
+            <i class="fab fa-linkedin"></i>
+            <i class="fab fa-facebook"></i>
+        </div>
+        <p> Copyright &copy; amilliondrizzles.com. All rights reserved.</p>
+
+    </section>
+
+
+    <script>
+        function sortPaintingsByMedium() {
+            const selectedMedium = document.getElementById('medium-select').value.toLowerCase();
+            const paintings = document.querySelectorAll('.painting-box');
+
+            paintings.forEach(painting => {
+                const paintingMedium = painting.querySelector('p:first-of-type').textContent.toLowerCase();
+                painting.style.display = (selectedMedium === 'all' || paintingMedium === selectedMedium) ? 'block' : 'none';
+            });
+        }
+        function sortPaintingsByPrice() {
+        const sortOrder = document.getElementById('price-select').value;
+        const paintings = document.querySelectorAll('.painting-box');
+        const paintingArray = Array.from(paintings);
+        paintingArray.sort((a, b) => {
+            const priceA = parseFloat(a.querySelector('.painting-price').textContent.replace('Rs.', '').trim());
+            const priceB = parseFloat(b.querySelector('.painting-price').textContent.replace('Rs.', '').trim());
+
+            if (sortOrder === 'asc') {
+                return priceA - priceB;
+            } else {
+                return priceB - priceA;
+            }
+        });
+        const container = document.querySelector('.shop-content');
+        container.innerHTML = '';
+        paintingArray.forEach(painting => {
+            container.appendChild(painting);
+        });
+    }
+    const ratingContainers = document.querySelectorAll('.rating-container');
+        ratingContainers.forEach(container => {
+            const stars = container.querySelectorAll('.star');
+            const submitButton = container.parentElement.querySelector('.submit-rating');
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const index = parseInt(star.getAttribute('data-index'));
+
+                    stars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.classList.add('fas');
+                            s.classList.remove('far');
+                        } else {
+                            s.classList.add('far');
+                            s.classList.remove('fas');
+                        }
+                    });
+
+                    const ratingValueInput = container.querySelector('.rating-value');
+                    ratingValueInput.value = index + 1;
+                    var ratingValue = ratingValueInput.value;
+                    const links = document.querySelectorAll('.submit-link');
+                        links.forEach(link => {
+                            var urll = link.getAttribute('href');  
+                            urll = urll.replace(/\b\d\b/g, ratingValue);
+                            link.setAttribute('href', urll);
+                        });
+
+                    submitButton.style.display = 'block';
+                });
+            });
+        });
+
+const submitButtons = document.querySelectorAll('.submit-rating');
+submitButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const ratingValue = button.parentElement.querySelector('.rating-value').value;
+        const paintingName = button.parentElement.parentElement.querySelector('.painting-title').innerText;
+
+        alert('Rating submitted: ' + ratingValue);
+    });
+});
+
+function sortPaintingsByRating() {
+    const sortOrder = document.getElementById('rating-select').value; 
+    const paintings = document.querySelectorAll('.painting-box');
+    const paintingArray = Array.from(paintings);
+    paintingArray.sort((a, b) => {
+        const ratingA = parseFloat(a.querySelector('.painting-rating').textContent.match(/(\d+(\.\d+)?)/)[0]);
+        const ratingB = parseFloat(b.querySelector('.painting-rating').textContent.match(/(\d+(\.\d+)?)/)[0]);
+
+        if (sortOrder === 'asc') {
+            return ratingA - ratingB;
+        } else {
+            return ratingB - ratingA;
+        }
+    });
+    const container = document.querySelector('.shop-content');
+    container.innerHTML = '';
+    paintingArray.forEach(painting => {
+        container.appendChild(painting);
+    });
+}
+        const btnCart = document.querySelector('#cart-icon');
+        const cart = document.querySelector('.cart');
+        const btnClose = document.querySelector('#cart-close');
+
+        btnCart.addEventListener('click', () => {
+            cart.classList.add('cart-active');
+        });
+
+        btnClose.addEventListener('click', () => {
+            cart.classList.remove('cart-active');
+        });
+
+        document.addEventListener('DOMContentLoaded', loadFood);
+
+        function loadFood() {
+            loadContent();
+        }
+
+        function loadContent() {
+            let btnRemove = document.querySelectorAll('.cart-remove');
+            btnRemove.forEach((btn) => {
+                btn.addEventListener('click', removeItem);
+            });
+            let qtyElements = document.querySelectorAll('.cart-quantity');
+            qtyElements.forEach((input) => {
+                input.addEventListener('change', changeQty);
+                input.addEventListener('input', validateInput);
+            });
+            let cartBtns = document.querySelectorAll('.add-cart');
+            cartBtns.forEach((btn) => {
+                btn.addEventListener('click', addCart);
+            });
+
+            updateTotal();
+        }
+        function removeItem() {
+            if (confirm('Are you sure to remove?')) {
+                let title = this.parentElement.querySelector('.cart-food-title').innerHTML;
+                itemList = itemList.filter(el => el.title != title);
+                this.parentElement.remove();
+                loadContent();
+            }
+        }
+        function changeQty() {
+            if (isNaN(this.value) || this.value < 1) {
+                this.value = 1;
+            }
+            loadContent();
+        }
+        function validateInput() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        }
+        let itemList = []; 
+function addCart() {
+    let painting = this.parentElement;
+    let title = painting.querySelector('.painting-title').innerHTML;
+    let price = painting.querySelector('.painting-price').innerHTML;
+    let imgSrc = painting.querySelector('.painting').src;
+    let existingItem = itemList.find(item => item.title === title);
+    if (existingItem) {
+        existingItem.quantity++; 
+        let existingCartItem = document.querySelector(`.cart-box[data-title="${title}"]`);
+        if (existingCartItem) {
+            let quantityInput = existingCartItem.querySelector('.cart-quantity');
+            quantityInput.value = existingItem.quantity;
+        }
+    } else {
+        itemList.push({ title, price, imgSrc, quantity: 1 });
+        let newProductElement = createCartProduct(title, price, imgSrc, 1);
+        let element = document.createElement('div');
+        element.innerHTML = newProductElement;
+        let cartBasket = document.querySelector('.cart-content');
+        cartBasket.append(element);
+    }
+
+    loadContent();
+    let cartContentInput = document.querySelector('input[name="cart"]');
+    cartContentInput.value = JSON.stringify(itemList); 
+}
+
+
+function createCartProduct(title, price, imgSrc, quantity) {
+    return `
+        <div class="cart-box">
+            <img src="${imgSrc}" class="cart-img">
+            <div class="detail-box">
+                <div class="cart-food-title">${title}</div>
+                <div class="painting-box">
+                    <div class="cart-price">${price}</div>
+                    <div class="cart-amt">${price}</div>
+                </div>
+                <input type="number" value="${quantity}" class="cart-quantity">
+            </div>
+            <ion-icon name="trash" class="cart-remove"></ion-icon>
+        </div>
+    `;
+}
+function updateTotal() {
+    const cartItems = document.querySelectorAll('.cart-box');
+    const totalValue = document.querySelector('.total-price');
+
+    let total = 0;
+
+    cartItems.forEach(product => {
+        let priceElement = product.querySelector('.cart-price');
+        let price = parseFloat(priceElement.innerHTML.replace("Rs.", ""));
+        console.log("Price:", price);
+        let qty = product.querySelector('.cart-quantity').value;
+        console.log("Quantity:", qty);
+        total += (price * qty);
+        let cartAmtElement = product.querySelector('.cart-amt');
+        if (cartAmtElement) {
+            cartAmtElement.innerText = "Rs." + (price * qty);
+        } else {
+            console.error("Error: .cart-amt element not found");
+        }
+    });
+
+    console.log("Total:", total);
+    totalValue.innerHTML = 'Rs.' + total.toFixed(2); 
+
+    const cartCount = document.querySelector('.cart-count');
+    var prev=parseInt(document.getElementById('initnum').value)
+    let count = prev+itemList.length;
+    cartCount.innerHTML = count;
+}
+
+function removeItem() {
+    if (confirm('Are you sure to remove?')) {
+        let title = this.parentElement.querySelector('.cart-food-title').innerHTML;
+        $.ajax({
+            url: "{% url 'remove_item_from_cart' %}",
+            type: "POST",
+            data: {
+                'title': title,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(data) {
+                location.reload();
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    }
+}
+    </script>
+</body>
+
+</html>
+

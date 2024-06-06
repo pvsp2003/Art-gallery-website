@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amilliondrizzles | Art Gallery</title>
+    <link rel="stylesheet" href="{% static 'app1/style2.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+
+<body>
+    {% csrf_token %} 
+    <div class="header_otherpages">
+        <nav>
+            <h2>amilliondrizzles</h2>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{% url 'home' %}">HOME</a></li>
+                    <li><a href="{% url 'aboutus' %}">ABOUT</a></li>
+                    <li><a href="{% url 'customize' %}">CUSTOMIZE</a></li>
+                    <li><a href="{% url 'contact' %}">FEEDBACK</a></li>
+                    <li><a href="{% url 'logout' %}">LOGOUT</a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" aria-hidden="true"></i>
+        </nav>
+    </div>
+
+    <section id="aboutus">
+        <h2 class="title">ABOUT US</h2>
+        <div class="about_row">
+            <div class="about_col">
+                <img src="{% static 'app1/amilliondrizzles__1_-modified-removebg-preview.png' %}" alt="About Image" class="about-image">
+            </div>
+
+            <div class="about_col">
+                <p>amilliondrizzles was started with a passion for art and a vision to provide a platform for artists to
+                    showcase their talent. Our art gallery brings together a diverse collection of artworks, offering
+                    enthusiasts a unique and enriching experience.</p>
+            </div>
+        </div>
+
+    </section>
+
+
+
+</body>
+
+</html>

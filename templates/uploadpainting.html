@@ -1,0 +1,236 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amilliondrizzles | Art Gallery</title>
+    <link rel="stylesheet" href="{% static 'app1/style2.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+    <style>
+        .delete-btn {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    text-decoration: none;
+    }
+
+    .delete-btn:hover {
+        background-color: darkred;
+    }
+    </style>
+</head>
+
+<body>
+    {% csrf_token %}
+    <div class="header_otherpages">
+        <nav>
+            <h2>amilliondrizzles</h2>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{% url 'painterhome' %}">HOME</a></li>
+                    <li><a href="{% url 'uploadpainting' %}">UPLOAD PAINTINGS</a></li>
+                    <li><a href="{% url 'vieworders' %}">VIEW ORDERS</a></li>
+                    <li><a href="{% url 'viewcustomize' %}">CUSTOMIZE QUERIES</a></li>
+                    <li><a href="{% url 'viewfeedback' %}">FEEDBACK</a></li>
+                    <li><a href="{% url 'logout' %}">LOGOUT</a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" aria-hidden="true"></i>
+        </nav>
+    </div>
+
+
+    <section id="gallery">
+        <div class="categories">
+            <h2 class="title">UPLOAD A NEW PAINTING</h2>
+            <div class="contactbox">
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="drop-zone">
+                        <span class="drop-zone__prompt">Drop image here or click to upload</span>
+                        <input type="file" name="myFile" class="drop-zone__input">
+                    </div>
+                    <div class="formgroup">
+                        <label for="paintingName">Painting Name</label>
+                        <input type="text" name="paintingName" id="paintingName" placeholder="">
+                    </div>
+                    <div class="formgroup">
+                        <label for="paintingPrice">Price</label>
+                        <input type="text" name="paintingPrice" id="paintingPrice" placeholder="">
+                    </div>
+                    <div class="formgroup">
+                        <label for="paintingMedium">Medium</label>
+                        <select name="paintingMedium" id="paintingMedium">
+                            <option value="">Select Medium</option>
+                            <option value="Watercolors">Watercolors</option>
+                            <option value="Goauche">Goauche</option>
+                            <option value="Acrylic">Acrylic</option>
+                        </select>
+                    </div>
+                    <div class="formgroup">
+                        <button type="submit" class="subbtn">Submit</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="smallcontainer">
+                <div class="row">
+                    {% for painting in paintings %}
+                    <div class="col">
+                        <img src="{{ painting.img.url }}" alt="{{ painting.name }}" class="src">
+                        <a href="{% url 'deletepainting' painting.id %}" class="delete-btn"><i class="fas fa-trash"></i></a>
+                        <h4>{{ painting.name }}</h4>
+                        <p>{{ painting.medium }}</p>
+                        <p>Rs {{ painting.price }}</p>
+                        <p>Rating: {{ painting.rating }}/5</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="footer">
+
+        <div class="icons">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-pinterest"></i>
+            <i class="fab fa-linkedin"></i>
+            <i class="fab fa-facebook"></i>
+        </div>
+        <p> Copyright &copy; amilliondrizzles.com. All rights reserved.</p>
+
+    </section>
+    <script>
+        document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+            const dropZoneElement = inputElement.closest(".drop-zone");
+
+            dropZoneElement.addEventListener("click", (e) => {
+                inputElement.click();
+            });
+
+            inputElement.addEventListener("change", (e) => {
+                if (inputElement.files.length) {
+                    const file = inputElement.files[0];
+                    if (isImage(file)) {
+                        updateThumbnail(dropZoneElement, file);
+                    } else {
+                        alert("Please upload an image with PNG or JPG format.");
+                    }
+                }
+            });
+
+            dropZoneElement.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropZoneElement.classList.add("drop-zone--over");
+            });
+
+            ["dragleave", "dragend"].forEach((type) => {
+                dropZoneElement.addEventListener(type, (e) => {
+                    dropZoneElement.classList.remove("drop-zone--over");
+                });
+            });
+
+            dropZoneElement.addEventListener("drop", (e) => {
+                e.preventDefault();
+
+                if (e.dataTransfer.files.length) {
+                    const file = e.dataTransfer.files[0];
+                    if (isImage(file)) {
+                        inputElement.files = e.dataTransfer.files;
+                        updateThumbnail(dropZoneElement, file);
+                    } else {
+                        alert("Please upload an image with PNG or JPG format.");
+                    }
+                }
+
+                dropZoneElement.classList.remove("drop-zone--over");
+            });
+        });
+
+        function updateThumbnail(dropZoneElement, file) {
+            let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+
+            if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+                dropZoneElement.querySelector(".drop-zone__prompt").remove();
+            }
+
+            if (!thumbnailElement) {
+                thumbnailElement = document.createElement("div");
+                thumbnailElement.classList.add("drop-zone__thumb");
+                dropZoneElement.appendChild(thumbnailElement);
+            }
+
+            thumbnailElement.dataset.label = file.name;
+
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+                };
+            } else {
+                thumbnailElement.style.backgroundImage = null;
+            }
+        }
+
+        function isImage(file) {
+            return file.type.startsWith("image/") && /\.(png|jpg|jpeg)$/i.test(file.name);
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.querySelector('.drop-zone__input');
+            const paintingName = document.getElementById('paintingName').value;
+            const paintingPrice = document.getElementById('paintingPrice').value;
+            const paintingMedium = document.getElementById('paintingMedium').value;
+
+            if (!fileInput.files.length || !paintingName || !paintingPrice || !paintingMedium) {
+                alert('Please fill in all fields and upload an image.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('paintingName', paintingName);
+            formData.append('paintingPrice', paintingPrice);
+            formData.append('paintingMedium', paintingMedium);
+            alert('Painting uploaded successfully!');
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Painting uploaded successfully!');
+                    // Reset form fields
+                    document.getElementById('paintingName').value = '';
+                    document.getElementById('paintingPrice').value = '';
+                    document.getElementById('paintingMedium').value = '';
+                    fileInput.value = '';
+                } else {
+                    alert('Error uploading painting. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error uploading painting:', error);
+                alert('An error occurred while uploading the painting. Please try again later.');
+            }
+        });
+
+    </script>
+</body>
+
+</html>
